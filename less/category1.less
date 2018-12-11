@@ -1,0 +1,43 @@
+// 引入初始化代码
+@import 'base.less';
+
+#header {
+    background-color: #ccc;
+}
+
+body {
+    height: 100vw;
+    padding-top: 45px;
+    padding-bottom: 50px;
+}
+
+#main {
+    display: flex;
+    .category-left {
+        height: 100%;
+        width: 85px;
+        .swiper-container {
+            height: 100%;
+            .swiper-slide {
+                height: auto;
+                ul {
+                    li {
+                        &.active {
+                            a {
+                                background-color: #fff;
+                                color: @main-color;
+                            }
+                        }
+                        a {
+                            display: block;
+                            height: 45px;
+                            line-height: 45px;
+                            text-align: center;
+                            background-color: #ccc;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

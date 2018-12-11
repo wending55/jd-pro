@@ -1,107 +1,151 @@
+// 写JS会写一个入口函数(jquery $(function){}) 页面加载的事件(原生JS是onload事件)
+
+/*on和addEventListener的区别
+1. on只能添加一个同类型事件
+2. 不能控制事件执行顺序
+3. 有些新增事件on里面的不支持(特别是移动端一些事件)
+
+1.addEventListener可以添加多个同类型的事件 
+2.可以控制事件的执行顺序 (冒泡 (false冒泡) 还是捕获 (true捕获))
+3. 可以添加新增的事件 (特别是移动端的一些事件)
+在移动端推荐使用addEventListener 方式添加事件   （在PC端低版本浏览器有兼容问题）
+*/
+
 window.addEventListener('load', function() {
-    var jd = new JD();
-    jd.searchGradient();
-    jd.downTime();
-    jd.slide();
-});
+    /*1. 添加一个滚动条滚动的事件 去获取滚动的距离
+    2. 获取轮播图元素的高度
+    3. 计算透明度   滚动距离 / 轮播图高度
+    4. 设置到header的rgba的a透明度上*/
+    // 3. 获取轮播图元素 获取轮播图的高度
+    var slideHeight = document.querySelector('#slide').offsetHeight;
+    // 5. 获取头部元素
+    var header = document.querySelector('#header');
+    // 1. 添加一个滚动条滚动的事件
+    window.addEventListener('scroll', function(e) {
+        // 2. 获取滚动条滚动的距离  兼容多种浏览器可以使用兼容写法 || 短路运算符   第一个值有值返回第一个值 第一个值没有值  返回第二个值
+        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        // 4. 计算透明度  滚动条距离/轮播图高度
+        var opacity = scrollTop / slideHeight;
+        // 5. 把透明度设置到头部的背景色 rgba 的a上
+        header.style.backgroundColor = 'rgba(222, 24, 27,' + opacity + ')';
+    });
 
-// 创建一个JD构造函数 
-var JD = function() {
 
-};
-// 把函数封装到对象里面是为了解决多个函数的时候全局变量污染
-// 函数放到原型对象上是为了给很多带参数的函数 需要共同的参数的时候减少参数的传递  
-// 只需要给构造函数传参 后面原型对象上的函数就能够获取到构造函数里面的参数
-// prototype 在JS里面是可以继承 继承给所有使用构造函数创建出来的对象
 
-// 给JD构造函数的原型对象添加方法  京东需要用到方法
-JD.prototype = {
-    // 每个方法实现了某个功能
-    //顶部搜索框渐变功能
-    searchGradient: function() {
 
-        // 1. 给滚动条添加滚动事件
-        window.addEventListener('scroll', scrollTopFun);
-        // 页面加载或者刷新的时候也去调用计算透明度的代码
-        scrollTopFun();
-
-        function scrollTopFun() {
-            // 2. 获取滚动条滚动的距离
-            var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-            // 3. 获取轮播图的高度
-            var slideHeight = document.querySelector('#slide').offsetHeight;
-            var opacity = 0;
-            // 4. 判断当前滚动的距离是否小于轮播图的高度
-            if (scrollTop < slideHeight) {
-                // 5. 计算透明度 滚动距离/轮播图高度 * 1
-                opacity = scrollTop / slideHeight * 1;
-            } else {
-                //6. 滚动的距离大于轮播图高度 默认为1
-                opacity = 1;
-            }
-            // 7. 设置顶部搜索框的样式
-            document.querySelector('#header').style.backgroundColor = 'rgba(222, 24, 27,' + opacity + ')';
-        }
-    },
-    //实现倒计时功能
-    downTime: function() {
-        // new Date如果传参表示获取指定时间  年 月 日 时 分 秒    注意月0-11月 0-6
-        //1. 获取今天中午12点的毫秒数 
-        var futureTime = new Date(2018, 7, 30, 12, 0, 0).getTime();
-        //2. 当前时间的毫秒数
-        var nowTime = new Date().getTime();
-        //3. 使用(未来时间-当前时间) /1000求得秒数
-        var time = (futureTime - nowTime) / 1000;
-        var spans = document.querySelectorAll('.seckill-time span');
-        // 4. 定义一个定时器 每秒执行一次
-        var timeId = setInterval(function() {
-            // 5. 总时间每次--
-            time--;
-            if (time <= 0) {
-                time = 0;
-                //判断如果倒计时已经到了0或者以下就清除定时器
-                clearInterval(timeId);
-            }
-            // 6. 计算总时间的时分秒
-            var hour = Math.floor(time / 3600) % 24;
-            var minute = Math.floor(time / 60) % 60;
-            var second = time % 60;
-            // 7. 获取页面所有的span设置到span时分秒的十位个位
-            spans[0].innerHTML = Math.floor(hour / 10);
-            spans[1].innerHTML = Math.floor(hour % 10);
-            spans[3].innerHTML = Math.floor(minute / 10);
-            spans[4].innerHTML = Math.floor(minute % 10);
-            spans[6].innerHTML = Math.floor(second / 10);
-            spans[7].innerHTML = Math.floor(second % 10);
-        }, 1000);
-    },
-    //实现轮播图的功能
-    slide: function() {
-        //初始化轮播图
-        var mySwiper = new Swiper('.swiper-container', {
-            //自动轮播图的参数
-            autoplay: {
-                //自动轮播图的间隔时间
-                delay: 1000,
-                //在手指滑动后是否要再次开启自动轮播图
-                disableOnInteraction: false,
-            },
-            //无缝轮播图参数
-            loop: true,
-            //初始化小圆点 注意页面需要有这个容器
-            pagination: {
-                el: '.swiper-pagination',
-            },
-            //添加轮播图效果
-            // effect: 'cube',
-            // grabCursor: true,
-            // cubeEffect: {
-            //     shadow: true,
-            //     slideShadows: true,
-            //     shadowOffset: 20,
-            //     shadowScale: 1,
-            // },
-
-        });
+    // 后台的时间怎么来的： 使用未来的时间 假设今天中午12点    和 一个当前2018年12月8日10:47:48    
+    // 用未来时间-当前的时间 求到时间差 作为一个总秒数返回给前端
+    //获取未来的时间
+    // var fetureTime = new Date("12 8,2018 12:00:00");
+    // 注意如果使用数字传参 月份0-11  减1月    调用getTime()函数把时间转成毫秒数 1970.1.1 00:00:00-当前
+    // 指定时间的时间差的毫秒数
+    var futureTime = new Date(2018, 11, 8, 14, 49, 00).getTime();
+    console.log(futureTime);
+    //获取当前时间
+    var nowTime = new Date().getTime();
+    console.log(nowTime);
+    // 因为使用fetureTime-nowTime默认转成毫秒数来相减 减完后默认 是毫秒数 求秒数  / 1000 求到秒  向下取整
+    console.log(futureTime - nowTime);
+    // 1. 定义一个总时间 2小时  1个小时60分钟  1 分钟是60秒    2小时就是7200秒 （从后台获取）
+    var time = Math.floor((futureTime - nowTime) / 1000);
+    // 3. 获取所有的span元素
+    var spans = document.querySelectorAll('.seckill-time span');
+    console.log(time);
+    // 倒计时功能
+    //  1. 需要有一个总的倒计时的事件(请求数据 后台返回回来的)
+    //  2. 把事件作为时分秒的形式显示给用户  每个一秒  总时间--
+    function downTime() {
+        // 2. 求到总时间的时分秒 
+        // 1. 小时 1个小时60分钟 1 分钟 60秒   1个小时 =  60*60 == 3600    总时间/3600
+        var hour = time / 3600;
+        // console.log(hour);
+        // 2. 分钟 1分钟60秒但是要把小时部分去掉   time % 3600 把小时部分去掉  然后1分钟60   总秒数 % 3600 / 60 == 分钟数 
+        var minute = time % 3600 / 60;
+        // console.log(minute);
+        // 3. 秒数 只要60秒以内都是秒数 总时间 % 60
+        var second = time % 60;
+        // console.log(second);
+        // 4. 把时分秒分别显示到对应的span里面 分别求出十位和个位 向下取整  十位 / 10  个位 % 10
+        spans[0].innerHTML = Math.floor(hour / 10);
+        spans[1].innerHTML = Math.floor(hour % 10);
+        spans[3].innerHTML = Math.floor(minute / 10);
+        spans[4].innerHTML = Math.floor(minute % 10);
+        spans[6].innerHTML = Math.floor(second / 10);
+        spans[7].innerHTML = Math.floor(second % 10);
     }
-}
+    if (time <= 0) {
+        time = 7200;
+    }
+    downTime();
+    // 5. 定义一个定时器 让总时间每隔1秒--
+    var timeId = setInterval(function() {
+        // 6. 让总时间在定时器里面每隔1秒--
+        time--;
+        if (time <= 0) {
+            time = 7200;
+            // 倒计时已经到了就清除定时器
+            // clearInterval(timeId);
+            // 7. 时间--完后重新计算--完后的时分秒设置到页面上
+            downTime();
+            // 跳转到秒杀商品页面
+        } else {
+            downTime();
+        }
+    }, 1000);
+
+
+    // 回顾原生的轮播图
+    // 1. 获取ul
+    // 2. 定义一个定时器每个1秒让ul切换一张图片  定义一个索引  每隔1秒索引++  
+    // 3. 计算ul位移的距离 索引*-100vw宽度
+    // 4. 设置给ul位移   添加过渡 慢慢位移
+    // var slideUl = document.querySelector('#slide ul');
+    // // 定义一个索引  每个1秒索引++  
+    // var index = 1;
+    // setInterval(function() {
+    //     // 定义一个索引  每个1秒索引++  
+    //     index++;
+    //     //计算位移距离
+    //     var translateX = (index * -100) + 'vw';
+    //     // 把位移设置到ul上
+    //     slideUl.style.transform = 'translateX(' + translateX + ')';
+    //     slideUl.style.transition = 'all 0.5s';
+    // }, 1000);
+    // // 过渡完成事件
+    // slideUl.addEventListener('transitionend', function() {
+    //     if (index >= 9) {
+    //         index = 1;
+    //         //计算位移距离
+    //         var translateX = (index * -100) + 'vw';
+    //         // 把位移设置到ul上
+    //         slideUl.style.transform = 'translateX(' + translateX + ')';
+    //         // 超过了后迅速回去清除过渡
+    //         slideUl.style.transition = 'none';
+    //     }
+    // });
+
+
+    // 初始化swiper插件  第一个参数轮播图大容器选择器  第二个参数是对象 是轮播图一些配置项
+    new Swiper('.swiper-container', {
+        // 方向 水平
+        direction: 'horizontal',
+        // 是否循环 无缝轮播图 （动态添加2张图片）
+        loop: true,
+        // 小圆点
+        pagination: {
+            el: '.swiper-pagination',
+        },
+        // autoplay: true, //等同于以下设置
+        autoplay: {
+            delay: 1000,
+            // 是否要滚动到最后一张结束自动轮播图  false不结束  true就结束(loop模式无效)
+            stopOnLastSlide: true,
+            // 在手指滑动的轮播图的时候是否要禁用轮播图自动切换  默认true禁用 改为false不仅用
+            disableOnInteraction: false,
+        },
+        // 效果 淡入淡出
+        // effect : 'fade',
+        // 3d立体效果
+        // effect : 'cube'
+    });
+}, false);

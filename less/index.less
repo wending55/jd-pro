@@ -1,261 +1,170 @@
-/* 1. 引入base.less公共样式文件 */
+/* 引入公共样式初始化代码 */
 
 @import 'base.less';
-body {
-    background-color: #ccc;
+
+#slide{
+	ul{
+		width: 1000vw;
+		display:flex;
+		transform:translateX(-100vw);
+	}
+	li{
+		width: 100vw;
+	}
+	/* 3. 设置样式 */
+	img{
+		width: 100vw;
+	}
+	/* 覆盖小圆点的样式 */
+	.swiper-pagination-bullet-active{
+		background-color: #fff;
+	}
 }
 
-
-
-
-/* 头部区域的样式 */
-
-#header {
-    display: flex;
-    background-color: rgba(0, 0, 0, 0);
-    position: fixed;
-    /* 固定定位的宽度100%参照不是父元素  而是浏览器宽度 */
-    width: 100%;
-    /* 如果要兼容PC端要设置最大宽度为640px */
-    max-width: 640px;
-    z-index: 2;
-    .icon-logo {
-        display: block;
-        width: 80px;
-        height: 40px;
-        /* background-image: url(../images/sprites.png); */
-        /* 图片本身是400px*400px要缩小一半为200*200px 背景图就设置背景图大小 */
-        /* 	background-size: 200px 200px;
-		background-position: 0 -108px; */
-        /* 注意如果想使用背景图连写要转义这个/ ~"/" 让/变成普通的CSS的斜杠而不是除号 */
-        background: url(../images/sprites.png) 0 -108px ~'/' 200px 200px;
-        padding: 5px 10px;
-        /* 修改背景图的定位位置 从内容区域开始定位  可以让背景图跟着内容部分来走
-		 背景图也可以被padding 挤动*/
-        /* 一般移动端针对a标签会使用padding padding范围内都是可以点击到 让a变大更加好点击 */
-        background-origin: content-box;
-        background-clip: content-box;
-    }
-    .search-from {
-        flex: 1;
-        padding-top: 5px;
-        position: relative;
-        .icon-search {
-            width: 20px;
-            height: 20px;
-            position: absolute;
-            left: 5px;
-            top: 10px;
-            /* background-image: url(../images/sprites.png);
-			background-size: 200px 200px;
-			background-position: -60px -108px; */
-            background: url(../images/sprites.png) -60px -108px ~'/' 200px 200px;
-        }
-        > input {
-            width: 100%;
-            height: 30px;
-            border-radius: 15px;
-            padding-left: 30px;
-        }
-    }
-    .login {
-        display: block;
-        padding: 5px 10px;
-        width: 60px;
-        height: 40px;
-        text-align: center;
-        line-height: 30px;
-        color: #fff;
-    }
+/* 导航条区域的样式 */
+#nav{
+	padding:10px 0;
+	.nav-tabs{
+		display:flex;
+		/* flex换行 */
+		flex-wrap:wrap;
+		>li{
+			/* 伸缩布局加了宽度太多了放不下宽度无法生效 给元素添加flex换行就能生效 */
+			width: 25vw;
+			>a{
+				display: block;
+				text-align: center;
+				>img{
+					width: 40px;
+					height: 40px;
+				}
+				>p{
+					margin: 5px 0;
+				}
+			}
+		}
+	}
 }
 
-
-/* 轮播图的样式 */
-
-#slide {
-    .swiper-slide{
-        a{
-            display: block;
-            img{
-                width: 100%;
-            }
-        }
-    }
-    .swiper-pagination-bullet{
-        opacity:1;
-        background-color: transparent;
-        border:1px solid #fff;
-    }
-    .swiper-pagination-bullet-active{
-        background-color: #fff;
-    }
+/* 商品的主体样式 */
+#main{
+	/* 为了让内容往上挤不要和底部重叠在一起 */
+	padding-bottom: 50px;
+	/* 秒杀区域 */
+	.jd-seckill{
+		padding: 10px 0;
+		box-shadow: 0px 0px 2px #666;
+		/* 秒杀的标题 */
+		.seckill-title{
+			display:flex;
+			position: relative;
+			> img{
+				width: 20px;
+				height: 25px;
+				margin-left: 10px;
+			}
+			> span{
+				color:@main-color;
+				margin-left: 10px;
+			}
+			.seckill-time{
+				margin-left: 10px;
+				/* 使用not排除选择器 排除中间3的倍数的元素 */
+				span:not(:nth-child(3n)){
+					background-color: #000;
+					color:#fff;
+					width: 15px;
+					display: inline-block;
+					text-align: center;
+				}
+			}
+			.seckill-more{
+				position: absolute;
+				right: 10px;
+				top: 0;
+				&::after{
+					content:'>';
+				}
+			}
+		}
+		/* 秒杀的内容 */
+		.seckill-content{
+			padding-top:10px;
+			> ul{
+				display:flex;
+				/* 注意如果父元素有padding导致内宽度和视口宽不一样 %和vw不一样大了
+				如果确保和屏幕一样宽度可以使用vw如果不确定 使用% */
+				/* padding: 20px ; */
+				>li{
+					/* width: 33.33%; */
+					width: 33.33vw;
+					>a{
+						display: block;
+						text-align: center;
+						>img{
+							width: 110px;
+						}
+						>span{
+							display: block;
+							color:@main-color;
+							font-size: 12px;
+						}
+						>del{
+							display: block;
+							color:#ccc;
+							font-size: 12px;
+						}
+					}
+				}
+			}
+		}
+	}
+	/* 京东超市 */
+	.jd-market{		
+		.market-title{
+			border-bottom: 1px solid #ccc;
+			>h4{
+				position: relative;
+				padding-left: 30px;
+				line-height: 30px;
+				font-size: 16px;
+				font-weight: normal;
+				&::before{
+					content:'';
+					position: absolute;
+					left: 20px;
+					top: 8px;
+					width: 4px;
+					height: 14px;
+					background-color: @main-color;
+				}
+			}
+		}
+		.market-content{
+			border-bottom: 1px solid #ccc;
+			.product{
+				display:flex;
+				.product-left{
+					width: 50vw;
+					a{
+						display: block;
+						img{
+							width: 100%;
+						}
+					}
+				}
+				.product-right{
+					width: 50vw;
+					a{
+						display: block;
+						img{
+							/* 因为父元素a有边框 内容变小了和屏幕50%不一样 不能使用vw单位 使用100% */
+							width: 100%;
+						}
+					}
+				}
+			}
+		}
+	}
 }
-
-
-/* 导航区域的样式 */
-
-#nav {
-    padding: 10px;
-    >ul {
-        display: flex;
-        flex-wrap: wrap;
-        >li {
-            width: 25%;
-            >a {
-                display: block;
-                text-align: center;
-                margin: 5px 0px;
-                >img {
-                    width: 40px;
-                    height: 40px;
-                }
-                >p {
-                    font-size: 14px;
-                }
-            }
-        }
-    }
-}
-
-
-/* 主体商品样式 */
-
-#main {
-    padding: 10px;
-    background-color: #eee;
-    padding-bottom: 60px;
-}
-
-
-/* 掌上秒杀样式 */
-
-#seckill {
-    border: 1px solid #ccc;
-    background-color: #fff;
-    /* 秒杀标题的样式 */
-    .seckill-title {
-        height: 30px;
-        line-height: 30px;
-        .seckill-icon {
-            width: 20px;
-            height: 25px;
-            float: left;
-            margin-left: 5px;
-        }
-        .seckill-name {
-            font-size: 14px;
-            color: @main-color;
-            float: left;
-            margin-left: 5px;
-        }
-        .seckill-time {
-            float: left;
-            margin-left: 5px;
-            span {
-                background-color: #000;
-                color: #fff;
-                width: 15px;
-                height: 15px;
-                display: inline-block;
-                line-height: 15px;
-                text-align: center;
-                &:nth-child(3n) {
-                    background-color: #fff;
-                    color: #000;
-                }
-            }
-        }
-        .seckill-more {
-            float: right;
-            margin-right: 5px;
-            font-size: 14px;
-        }
-    }
-    /* 秒杀内容的样式 */
-    .seckill-content {
-        >ul {
-            display: flex;
-            >li {
-                flex: 1;
-                border-right: 1px solid #ccc;
-                &:last-of-type {
-                    border-right: none;
-                }
-                >a {
-                    display: block;
-                    text-align: center;
-                    >img {
-                        width: 110px;
-                    }
-                    p {
-                        font-size: 12px;
-                        text-align: center;
-                        line-height: 20px;
-                        /* p元素前面有别的元素不能使用first-child */
-                        &:first-of-type {
-                            span {
-                                color: @main-color;
-                            }
-                        }
-                        &:last-of-type {
-                            del {
-                                color: #ccc;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-/* 京东超市的样式 */
-
-.jd-market {
-    border: 1px solid #ccc;
-    background-color: #fff;
-    margin-top: 10px;
-    .jd-market-title {
-        border-bottom: 1px solid #ccc;
-        >h4 {
-            height: 30px;
-            line-height: 30px;
-            padding-left: 30px;
-            font-weight: normal;
-            position: relative;
-            &::before {
-                content: '';
-                width: 4px;
-                height: 15px;
-                background-color: @main-color;
-                position: absolute;
-                left: 20px;
-                top: 7px;
-            }
-        }
-    }
-    .jd-market-content {
-        display: flex;
-        .left {
-            flex: 1;
-            a {
-                display: block;
-                img {
-                    width: 100%;
-                }
-            }
-        }
-        .right {
-            flex: 1;
-            a {
-                display: block;
-                img {
-                    width: 100%;
-                }
-            }
-        }
-    }
-}
-
 
